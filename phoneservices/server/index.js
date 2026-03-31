@@ -25,18 +25,20 @@ app.use("/api", uploadRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const start = async () => {
-  await connectDb();
-  const adminSeed = await ensureAdminUser();
-  if (adminSeed.action === "created") {
-    console.log(`Seeded admin user ${adminSeed.email} (${adminSeed.role})`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`API server running on port ${port}`);
+});
+
+const initDataLayer = async () => {
+  try {
+    await connectDb();
+    const adminSeed = await ensureAdminUser();
+    if (adminSeed.action === "created") {
+      console.log(`Seeded admin user ${adminSeed.email} (${adminSeed.role})`);
+    }
+  } catch (err) {
+    console.error("Data layer initialization failed", err);
   }
-  app.listen(port, () => {
-    console.log(`API server running on http://localhost:${port}`);
-  });
 };
 
-start().catch((err) => {
-  console.error("Failed to start server", err);
-  process.exit(1);
-});
+initDataLayer();

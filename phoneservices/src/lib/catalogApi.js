@@ -11,6 +11,22 @@ const clearTokens = () => {
   window.localStorage.removeItem("phoneservices.admin.refreshToken");
 };
 
+const parseJsonOrThrow = async (res) => {
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    const isHtml = text.trim().startsWith("<!DOCTYPE");
+    const error = new Error(
+      isHtml
+        ? "API returned HTML instead of JSON. Configure VITE_API_BASE_URL to your live backend URL and redeploy."
+        : "API returned invalid JSON"
+    );
+    error.status = res.status;
+    throw error;
+  }
+};
+
 const refreshAccessToken = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return false;
@@ -26,7 +42,7 @@ const refreshAccessToken = async () => {
     return false;
   }
 
-  const data = await res.json();
+  const data = await parseJsonOrThrow(res);
   setTokens(data.token, data.refreshToken);
   return true;
 };
@@ -48,13 +64,13 @@ const request = async (path, options = {}, retried = false) => {
   }
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = await parseJsonOrThrow(res).catch(() => ({}));
     const error = new Error(data.message || `Request failed: ${res.status}`);
     error.status = res.status;
     throw error;
   }
 
-  return res.json();
+  return parseJsonOrThrow(res);
 };
 
 export const catalogApi = {

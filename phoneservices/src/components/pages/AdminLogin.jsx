@@ -3,6 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { setAdminTokens } from "@/lib/adminAuth";
 import { API_BASE } from "@/lib/apiBase";
 
+const parseJsonOrThrow = async (res) => {
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    const hint = text.trim().startsWith("<!DOCTYPE")
+      ? "API returned HTML instead of JSON. Set VITE_API_BASE_URL to your live backend URL and redeploy."
+      : "API returned invalid JSON.";
+    throw new Error(hint);
+  }
+};
+
 const AdminLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,7 +35,7 @@ const AdminLogin = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      const data = await parseJsonOrThrow(res);
       if (!res.ok) throw new Error(data.message || "Login failed");
       setAdminTokens({ token: data.token, refreshToken: data.refreshToken });
       navigate(from, { replace: true });
