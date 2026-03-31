@@ -41,7 +41,7 @@ const AdminLogin = () => {
       navigate(from, { replace: true });
     } catch (err) {
       if (err instanceof TypeError) {
-        setError("Cannot reach the API server. Make sure backend is running and API URL is correct.");
+        setError(`Cannot reach API server at ${API_BASE}. Verify backend is live, URL is https, and CORS allows your Netlify domain.`);
       } else {
         setError(err.message || "Login failed");
       }

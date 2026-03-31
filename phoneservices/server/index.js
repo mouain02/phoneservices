@@ -13,7 +13,22 @@ import { errorHandler, notFound } from "./middleware/errorHandler.js";
 const app = express();
 const port = Number(process.env.PORT || 5000);
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:8080" }));
+const allowedOrigins = String(process.env.CORS_ORIGIN || "http://localhost:8080")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow non-browser clients and same-origin requests without Origin header.
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: false,
+  })
+);
 app.use(express.json({ limit: "15mb" }));
 app.use("/uploads", express.static(path.resolve(process.cwd(), "server", "uploads")));
 
