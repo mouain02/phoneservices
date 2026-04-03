@@ -1,4 +1,15 @@
 {
+  "name": "phoneservices-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run start",
+    "build:client": "npm --prefix client run build",
+    "start:server": "npm --prefix server run start",
+    "install:all": "npm --prefix server install && npm --prefix client install"
+  }
+}{
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
@@ -17,7 +28,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "create:admin": "node server/scripts/createAdminUser.js"
+    "create:admin": "node server/scripts/createAdminUser.js",
+    "import:gsmarena": "node server/scripts/importGsmarenaDataset.js",
+    "import:phones": "node server/scripts/importPhonesCsv.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -54,6 +67,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cors": "^2.8.5",
+    "csv-parse": "^6.2.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.7",
     "embla-carousel-react": "^8.6.0",

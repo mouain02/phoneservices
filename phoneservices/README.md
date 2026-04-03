@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# PhoneServices Monorepo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is now split into two independent apps:
 
-## Available Scripts
+- `client/` -> React frontend (Vite)
+- `server/` -> Node.js + Express backend (MongoDB)
 
-In the project directory, you can run:
+## Final Structure
 
-### `npm start`
+```text
+root
+  client/
+    package.json
+    src/
+    public/
+    vite.config.js
+    .env.example
+    .env.vercel.example
+  server/
+    package.json
+    server.js
+    routes/
+    controllers/
+    middleware/
+    models/
+    config/
+    scripts/
+    data/
+    .env.example
+    .env.render.example
+  README.md
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Local Development
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Quick Start (from repo root)
 
-### `npm test`
+```bash
+npm run install:all
+npm run dev:server
+npm run dev:client
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Use two terminals for the `dev:server` and `dev:client` commands.
 
-### `npm run build`
+### 1) Start Backend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd server
+npm install
+npm run dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Backend runs on `http://localhost:5000` by default.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Phone dataset import:
 
-### `npm run eject`
+```bash
+cd server
+npm run import:phones
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Default file location: `server/data/phones.csv`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2) Start Frontend
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+cd client
+npm install
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Frontend runs on `http://localhost:5173` by default.
 
-## Learn More
+## Environment Variables
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend (`client/.env`)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Use either variable:
 
-### Code Splitting
+```env
+REACT_APP_API_URL=http://localhost:5000
+# or
+VITE_API_BASE_URL=http://localhost:5000/api
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`REACT_APP_API_URL` is normalized automatically to `.../api` when needed.
 
-### Analyzing the Bundle Size
+### Backend (`server/.env`)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/phoneservices
+PORT=5000
+CORS_ORIGIN=http://localhost:5173
+JWT_SECRET=replace_with_secure_secret
+JWT_REFRESH_SECRET=replace_with_secure_refresh_secret
+```
 
-### Making a Progressive Web App
+## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Frontend: deploy `client/` to Vercel
+- Backend: deploy `server/` to Render
+- MongoDB: configure `MONGO_URI` in Render environment variables
 
-### Advanced Configuration
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- CORS is enabled on backend and configured via `CORS_ORIGIN`.
+- Backend imports no frontend files; default catalog data is now owned by `server/data/defaultCatalog.js`.

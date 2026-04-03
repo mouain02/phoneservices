@@ -20,7 +20,7 @@ import {
   updateCustomerFeedbackById,
   updateDeviceTypeById,
   updateModelById,
-} from "../api/catalogController.js";
+} from "../controllers/catalogController.js";
 import { requireAdmin, requireRole } from "../middleware/auth.js";
 
 const router = Router();

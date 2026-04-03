@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadImage } from "../api/uploadController.js";
+import { uploadImage } from "../controllers/uploadController.js";
 import { requireAdmin } from "../middleware/auth.js";
 
 const router = Router();

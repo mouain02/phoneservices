@@ -8,7 +8,7 @@ import {
 	logoutAdmin,
 	refreshAdminToken,
 	updateAdminUserByEmail,
-} from "../api/authController.js";
+} from "../controllers/authController.js";
 import { requireAdmin, requireRole } from "../middleware/auth.js";
 
 const router = Router();

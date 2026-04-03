@@ -9,7 +9,7 @@ import {
   brands as defaultBrands,
   deviceTypes as defaultDeviceTypes,
   models as defaultModels,
-} from "../../src/components/data/phones.js";
+} from "../data/defaultCatalog.js";
 
 const seed = async () => {
   await connectDb();
@@ -21,8 +21,25 @@ const seed = async () => {
   ]);
 
   await DeviceType.insertMany(defaultDeviceTypes, { ordered: false });
-  await Brand.insertMany(defaultBrands, { ordered: false });
-  await Model.insertMany(defaultModels, { ordered: false });
+
+  // Create brands and map their IDs
+  const brandMap = new Map(); // Maps brand slug (e.g., "apple") to MongoDB _id
+  for (const brandData of defaultBrands) {
+    const { id: brandSlug, ...brandDoc } = brandData;
+    const createdBrand = await Brand.create(brandDoc);
+    brandMap.set(brandSlug, createdBrand._id);
+  }
+
+  // Create models with ObjectId references to brands
+  const modelsWithObjectIds = defaultModels.map((model) => {
+    const { id, brandId: brandSlug, ...modelDoc } = model;
+    const brandObjectId = brandMap.get(brandSlug);
+    if (!brandObjectId) {
+      throw new Error(`Brand "${brandSlug}" not found for model "${modelDoc.name}"`);
+    }
+    return { ...modelDoc, brandId: brandObjectId };
+  });
+  await Model.insertMany(modelsWithObjectIds, { ordered: false });
 
   const email = (process.env.ADMIN_EMAIL || "admin@phoneservices.local").toLowerCase();
   const password = process.env.ADMIN_PASSWORD || "admin123";
