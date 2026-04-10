@@ -6,8 +6,7 @@ Use this checklist when frontend shows: "Cannot reach the API server. Make sure 
 
 Set these environment variables in the Vercel project settings:
 
-- `REACT_APP_API_URL=https://<your-backend-domain>`
-- or `VITE_API_BASE_URL=https://<your-backend-domain>/api`
+- `VITE_API_BASE_URL=https://<your-backend-domain>/api`
 
 Rules:
 
@@ -17,7 +16,7 @@ Rules:
 
 Example:
 
-- `REACT_APP_API_URL=https://phoneservices-api.onrender.com`
+- `VITE_API_BASE_URL=https://phoneservices-api.onrender.com/api`
 
 ## 2) Deploy Backend
 
@@ -25,7 +24,7 @@ Your backend host can be Render, Railway, Fly.io, VPS, or any Node host.
 
 Set backend environment variables:
 
-- `MONGO_URI=<your-production-mongo-uri>`
+- `MONGODB_URI=<your-production-mongo-uri>`
 - `JWT_SECRET=<long-random-secret>`
 - `JWT_REFRESH_SECRET=<long-random-secret>`
 - `CORS_ORIGIN=https://<your-frontend-domain>`
